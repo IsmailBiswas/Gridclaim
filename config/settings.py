@@ -144,3 +144,8 @@ CSRF_TRUSTED_ORIGINS = [
 # Trust reverse-proxy TLS termination (nginx).
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 USE_X_FORWARDED_HOST = True
+
+# PostHog (US Cloud). Project token is write-only / safe in the browser.
+POSTHOG_API_KEY = env("POSTHOG_API_KEY", "")
+POSTHOG_HOST = env("POSTHOG_HOST", "https://us.i.posthog.com")
+POSTHOG_PROJECT_ID = env("POSTHOG_PROJECT_ID", "")

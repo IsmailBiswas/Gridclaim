@@ -1,5 +1,7 @@
 # Gridclaim
 
+**Live:** [https://eieio.ismailbiswas.com](https://eieio.ismailbiswas.com)
+
 A real-time shared board where anyone can claim blocks and every connected client sees updates instantly.
 
 ## Stack

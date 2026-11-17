@@ -118,6 +118,13 @@
     if (xhr.status === 200) {
       clearTimerUI();
       startCooldown(cooldownSeconds);
+      if (window.posthog) {
+        window.posthog.capture("cell_claimed", {
+          cell_id: el.dataset.cellId,
+          x: el.dataset.x,
+          y: el.dataset.y,
+        });
+      }
       return;
     }
 
@@ -125,6 +132,11 @@
       const remaining = Number(xhr.getResponseHeader("X-Cooldown-Remaining") || cooldownSeconds);
       startCooldown(remaining > 0 ? remaining : cooldownSeconds);
       onCooldownClick(el);
+      if (window.posthog) {
+        window.posthog.capture("claim_cooldown_blocked", {
+          cell_id: el.dataset.cellId,
+        });
+      }
     }
   });
 

@@ -20,4 +20,7 @@ def board_ui(request: HttpRequest) -> dict:
     return {
         "cooldown_seconds": settings.CLAIM_COOLDOWN_SECONDS,
         "cooldown_remaining": remaining,
+        "posthog_api_key": settings.POSTHOG_API_KEY,
+        "posthog_host": settings.POSTHOG_HOST,
+        "posthog_project_id": settings.POSTHOG_PROJECT_ID,
     }
