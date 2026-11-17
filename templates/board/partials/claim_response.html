@@ -1,0 +1,32 @@
+{% if result.cell %}
+  {% include "board/partials/cell.html" with cell=result.cell current_player_id=current_player_id highlight="1" oob="1" %}
+{% endif %}
+
+{% include "board/partials/sidebar_oob.html" with stats=stats leaderboard=leaderboard %}
+
+{% if result.outcome == "claimed" or result.outcome == "reclaimed" %}
+  <div
+    id="cooldown-sync"
+    hx-swap-oob="true"
+    hidden
+    data-action="start"
+    data-seconds="{{ cooldown_seconds }}"
+  ></div>
+{% elif result.outcome == "cooldown" %}
+  <div
+    id="cooldown-sync"
+    hx-swap-oob="true"
+    hidden
+    data-action="reject"
+    data-seconds="{{ result.cooldown_remaining }}"
+    data-cell-id="{{ result.cell.id }}"
+  ></div>
+{% endif %}
+
+<div id="toast-host" hx-swap-oob="beforeend">
+  <div
+    class="toast {% if result.outcome == 'cooldown' %}toast-warn{% elif result.outcome == 'claimed' or result.outcome == 'reclaimed' %}toast-ok{% else %}toast-info{% endif %}"
+  >
+    {{ result.message }}
+  </div>
+</div>

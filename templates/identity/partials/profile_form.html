@@ -1,0 +1,49 @@
+<form
+  class="profile-form"
+  hx-post="{% url 'identity:profile' %}"
+  hx-target="#profile-form"
+  hx-swap="innerHTML"
+>
+  {% csrf_token %}
+  <label class="field">
+    <span>Display name</span>
+    <input
+      type="text"
+      name="display_name"
+      maxlength="40"
+      value="{{ current_player.display_name }}"
+      required
+      autocomplete="nickname"
+    >
+  </label>
+
+  <fieldset class="field">
+    <legend>Color</legend>
+    <div class="color-row" role="radiogroup" aria-label="Player color">
+      {% for color in player_colors %}
+        <label class="color-option" title="{{ color }}">
+          <input
+            type="radio"
+            name="color"
+            value="{{ color }}"
+            {% if current_player.color == color %}checked{% endif %}
+          >
+          <span class="color-chip" style="--chip: {{ color }}"></span>
+        </label>
+      {% endfor %}
+    </div>
+  </fieldset>
+
+  {% if error %}
+    <p class="form-error">{{ error }}</p>
+  {% endif %}
+  {% if saved %}
+    <p class="form-ok">Saved</p>
+    <div id="you-chip" class="you-chip" style="--you: {{ current_player.color }}" hx-swap-oob="true">
+      <span class="swatch" aria-hidden="true"></span>
+      <span class="you-name">{{ current_player.display_name }}</span>
+    </div>
+  {% endif %}
+
+  <button type="submit" class="btn">Update identity</button>
+</form>

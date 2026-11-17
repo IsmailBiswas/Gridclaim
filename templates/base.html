@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Gridclaim{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=5">
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  <script src="https://unpkg.com/htmx-ext-ws@2.0.2"></script>
+</head>
+<body>
+  <div
+    id="app"
+    class="app-shell"
+    data-player-id="{{ current_player.id }}"
+    data-cooldown-seconds="{{ cooldown_seconds }}"
+    data-cooldown-remaining="{{ cooldown_remaining }}"
+    hx-ext="ws"
+    ws-connect="/ws/board/?player_id={{ current_player.id }}"
+  >
+    <header class="topbar">
+      <div class="brand">
+        <p class="brand-logo">Gridclaim</p>
+        <p class="brand-sub">Shared board · live claims</p>
+      </div>
+      <div class="topbar-right">
+        <div id="ws-status" class="pill pill-muted">Connecting…</div>
+        <div id="you-chip" class="you-chip" style="--you: {{ current_player.color }}">
+          <span class="swatch" aria-hidden="true"></span>
+          <span class="you-name">{{ current_player.display_name }}</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+      {% block content %}{% endblock %}
+    </main>
+
+    <div id="toast-host" class="toast-host" aria-live="polite"></div>
+    {# Placeholder so claim responses can OOB-swap cooldown state into the page. #}
+    <div id="cooldown-sync" hidden data-action="" data-seconds="0"></div>
+  </div>
+  <script src="{% static 'js/app.js' %}?v=5"></script>
+</body>
+</html>

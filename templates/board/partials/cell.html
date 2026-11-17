@@ -1,0 +1,20 @@
+{% with owner_id=cell.owner_id|default_if_none:"" %}
+<button
+  id="cell-{{ cell.id }}"
+  type="button"
+  class="cell{% if not cell.owner_id %} is-empty{% endif %}{% if highlight %} is-flash{% endif %}"
+  {% if oob %}hx-swap-oob="outerHTML"{% endif %}
+  style="{% if cell.owner_color %}--owner: {{ cell.owner_color }};{% endif %}"
+  data-cell-id="{{ cell.id }}"
+  data-owner-id="{{ owner_id }}"
+  data-x="{{ cell.x }}"
+  data-y="{{ cell.y }}"
+  title="{% if cell.owner_name %}{{ cell.owner_name }} · ({{ cell.x }}, {{ cell.y }}){% else %}Open · ({{ cell.x }}, {{ cell.y }}){% endif %}"
+  hx-post="{% url 'board:claim' cell.id %}"
+  hx-swap="none"
+  hx-sync="closest #grid:drop"
+>
+  <span class="cell-inner" aria-hidden="true"></span>
+  <span class="cell-timer" aria-hidden="true"></span>
+</button>
+{% endwith %}

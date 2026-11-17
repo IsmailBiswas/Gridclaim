@@ -1,0 +1,77 @@
+# Isolated stack for Gridclaim / eieio — no host ports on db/redis,
+# only 127.0.0.1:23000 for nginx → Daphne.
+name: eieio
+
+services:
+  eieio-db:
+    image: postgres:16-alpine
+    container_name: eieio-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: eieio
+      POSTGRES_USER: eieio
+      POSTGRES_PASSWORD: eieio_change_me
+    volumes:
+      - eieio_postgres_data:/var/lib/postgresql/data
+    networks:
+      - eieio_net
+    # No host ports — stays private to this compose network.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U eieio -d eieio"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  eieio-redis:
+    image: redis:7-alpine
+    container_name: eieio-redis
+    restart: unless-stopped
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    networks:
+      - eieio_net
+    # No host ports — does not collide with any other Redis on the machine.
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  eieio-web:
+    build: .
+    container_name: eieio-web
+    restart: unless-stopped
+    ports:
+      # nginx on the host proxies to this loopback port only
+      - "127.0.0.1:23000:23000"
+    environment:
+      DJANGO_SECRET_KEY: change-me-in-production-please
+      DJANGO_DEBUG: "0"
+      DJANGO_ALLOWED_HOSTS: "eieio.ismailbiswas.com,localhost,127.0.0.1"
+      DJANGO_CSRF_TRUSTED_ORIGINS: "https://eieio.ismailbiswas.com,http://eieio.ismailbiswas.com"
+      POSTGRES_HOST: eieio-db
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: eieio
+      POSTGRES_USER: eieio
+      POSTGRES_PASSWORD: eieio_change_me
+      REDIS_HOST: eieio-redis
+      REDIS_PORT: "6379"
+      PORT: "23000"
+      BOARD_WIDTH: "25"
+      BOARD_HEIGHT: "20"
+      CLAIM_COOLDOWN_SECONDS: "2.5"
+    depends_on:
+      eieio-db:
+        condition: service_healthy
+      eieio-redis:
+        condition: service_healthy
+    networks:
+      - eieio_net
+
+networks:
+  eieio_net:
+    name: eieio_net
+    driver: bridge
+
+volumes:
+  eieio_postgres_data:
+    name: eieio_postgres_data

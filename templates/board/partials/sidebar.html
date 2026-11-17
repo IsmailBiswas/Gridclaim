@@ -1,0 +1,44 @@
+<div class="panel stats-panel">
+  <div class="panel-head compact">
+    <h2 class="panel-title sm">Live pulse</h2>
+    <p class="panel-copy tight">{{ cooldown_seconds }}s claim cooldown</p>
+  </div>
+  <div class="stat-grid">
+    <div class="stat">
+      <span class="stat-value">{{ stats.claimed_cells }}</span>
+      <span class="stat-label">Claimed</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value">{{ stats.open_cells }}</span>
+      <span class="stat-label">Open</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value">{{ stats.unique_owners }}</span>
+      <span class="stat-label">Players</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value">{{ stats.width }}×{{ stats.height }}</span>
+      <span class="stat-label">Grid</span>
+    </div>
+  </div>
+</div>
+
+<div class="panel leaderboard-panel">
+  <div class="panel-head compact">
+    <h2 class="panel-title sm">Leaderboard</h2>
+  </div>
+  {% if leaderboard %}
+    <ol class="leaderboard">
+      {% for entry in leaderboard %}
+        <li class="leader-row">
+          <span class="rank">{{ forloop.counter }}</span>
+          <span class="swatch" style="--you: {{ entry.color }}"></span>
+          <span class="leader-name">{{ entry.display_name }}</span>
+          <span class="leader-count">{{ entry.cell_count }}</span>
+        </li>
+      {% endfor %}
+    </ol>
+  {% else %}
+    <p class="empty-note">No claims yet — be first.</p>
+  {% endif %}
+</div>

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="layout">
+  <div class="panel board-panel">
+    <div class="panel-head">
+      <div>
+        <h1 class="panel-title">The board</h1>
+        <p class="panel-copy">Click any block to claim it. Everyone online sees it instantly.</p>
+      </div>
+      <div class="legend">
+        <span class="legend-item"><i class="dot empty"></i> Open</span>
+        <span class="legend-item"><i class="dot yours"></i> Yours</span>
+        <span class="legend-item"><i class="dot taken"></i> Taken</span>
+      </div>
+    </div>
+
+    <div
+      id="grid"
+      class="grid"
+      style="--cols: {{ board_width }}; --rows: {{ board_height }};"
+      role="grid"
+      aria-label="Shared claim board"
+    >
+      {% for cell in cells %}
+        {% include "board/partials/cell.html" with cell=cell current_player_id=current_player.id %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <aside class="side-stack">
+    <div id="sidebar">
+      {% include "board/partials/sidebar.html" %}
+    </div>
+
+    <div class="panel profile-panel">
+      <div class="panel-head compact">
+        <h2 class="panel-title sm">Your identity</h2>
+      </div>
+      <div id="profile-form">
+        {% include "identity/partials/profile_form.html" %}
+      </div>
+    </div>
+  </aside>
+</section>
+{% endblock %}
